@@ -17,6 +17,11 @@ const FirstStage = ({ toggle, setNumQ }) => {
     setValid(value >= defaults.MINIMUM_QUESTIONS && value <= defaults.MAXIMUM_QUESTIONS)
   }
 
+  const onSubmit = e => {
+    e.preventDefault()
+    toggle()
+  }
+
   return <>
     <h1>
       First information we need is, how many questions 
@@ -28,17 +33,19 @@ const FirstStage = ({ toggle, setNumQ }) => {
     </h1>
     <small>Notice: You cannot make more than 1 written response. This is so that customers don't get bored writing essays. or even worse be too lazy to even write anything. So try avoidcing written responses as much as possible</small>
 
-    <div className="flex flex-col items-start gap-y-6 mt-8">
-      <div className="w-full">
-        <TextInput valid={valid} placeholder="Default: 3" onChange={handleType} />
-        {!valid &&
-          <small className="text-red-500">
-            You must choose a number between {defaults.MINIMUM_QUESTIONS} and {defaults.MAXIMUM_QUESTIONS}
-          </small>
-        }
+    <form onSubmit={onSubmit}>
+      <div className="flex flex-col items-start gap-y-6 mt-8">
+        <div className="w-full">
+          <TextInput valid={valid} placeholder="Default: 3" onChange={handleType} />
+          {!valid &&
+            <small className="text-red-500">
+              You must choose a number between {defaults.MINIMUM_QUESTIONS} and {defaults.MAXIMUM_QUESTIONS}
+            </small>
+          }
+        </div>
+        <Button disabled={!valid} text="Next" type="submit" />
       </div>
-      <Button disabled={!valid} text="Next" onClick={toggle} />
-    </div>
+    </form>
   </>
 }
 

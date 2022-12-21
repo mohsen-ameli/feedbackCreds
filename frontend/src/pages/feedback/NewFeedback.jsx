@@ -10,7 +10,7 @@ const NewFeedback = () => {
   // Stages #0 - How many questions
   // Stages #1 - What type of questions
   // Stages #2 - QR Codes
-  const [stage, setStage] = useState(0)
+  const [stage, setStage] = useState(1)
   // Number of questions
   const [numQ, setNumQ] = useState(defaults.DEFAULT_QUESTIONS)
 
@@ -18,8 +18,8 @@ const NewFeedback = () => {
 
   return <>
     <Container>
-      {stage === 0 && <FirstStage toggle={toggle} setNumQ={setNumQ} />}
-      {stage === 1 && <SecondStage toggle={toggle} numQ={numQ} />}
+      {/* {stage === 0 && <FirstStage toggle={toggle} setNumQ={setNumQ} />} */}
+      {stage === 1 && <SecondStage toggle={toggle} numQ={numQ} setNumQ={setNumQ} />}
       {stage === 2 && <ThirdStage toggle={toggle} />}
     </Container>
   </>
