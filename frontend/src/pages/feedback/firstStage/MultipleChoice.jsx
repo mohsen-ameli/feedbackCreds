@@ -1,17 +1,18 @@
-import { useRef, useState } from "react"
-import Button from "../../../components/ui/Button"
+import { useContext, useRef, useState } from "react"
+import { Button, DangerButton } from "../../../components/ui/Button"
 import Input from "../../../components/ui/TextInput"
-import GetFeedbackItem from "../../../utils/GetFeedbackItem"
-import SaveStorage from "../../../utils/SaveStorage"
 import CardSpring from "./CardSpring"
 import { DEFAULT_NUM_OPTIONS } from "../../../data/Constants"
+import { StageContext } from "./FirstStage"
 
-const MultipleChoice = ({ back, deleteButton, index }) => {
+const MultipleChoice = ({ back }) => {
   const input = useRef()
   const options = useRef()
-  const feedbackItem = GetFeedbackItem(index)
-
   const [valid, setValid] = useState(true)
+  // Context
+  const { update, delete_, question } = useContext(StageContext)
+
+  // TODO: Add validation
 
   const onSubmit = e => {
     e.preventDefault()
@@ -29,29 +30,40 @@ const MultipleChoice = ({ back, deleteButton, index }) => {
       setValid(true)
     }
 
-    // Saving the data to local storage
-    const data = {
-      "id": index,
-      "type": "Multiple-choice",
-      "question": input.current.value,
-      "options": [...optionList]
+    // Update question
+    const context = {
+      "title": input.current.value,
+      "question_type": "Multiple-choice",
+      "choice_1": optionList[0],
+      "choice_2": optionList[1],
+      "choice_3": optionList[2],
+      "choice_4": optionList[3],
     }
-    SaveStorage(data)
+    update(question.id, context)
+  
+    // Go back
     back()
   }
 
   return <>
-    <CardSpring>
+    {/* Back button */}
+    <span onClick={back} className="font-bold text-lg cursor-pointer p-4 absolute left-0 top-0">
+      &#x2190; Back
+    </span>
+
+    {/* Card info */}
+    <CardSpring className="pt-14">
       {/* Form */}
       <form onSubmit={onSubmit} className="flex flex-col items-center">
         {/* Question title */}
-        <Input defaultValue={feedbackItem?.question} ref={input} placeholder="Question title" />
+        <Input valid={valid} defaultValue={question.title} ref={input} placeholder="Question title" />
+        
         {/* Options */}
         <div ref={options} className="grid grid-cols-4 gap-x-2 my-4">
           {Array(DEFAULT_NUM_OPTIONS).fill(0).map((_, i) => (
             <Input
               key={i}
-              defaultValue={feedbackItem?.options && feedbackItem.options[i]}
+              defaultValue={question[`choice_${i + 1}`]}
               placeholder={`#${i + 1}`}
             />
           ))}
@@ -59,8 +71,7 @@ const MultipleChoice = ({ back, deleteButton, index }) => {
 
         {/* Buttons */}
         <div className="flex gap-x-2">
-          <Button text="Back" onClick={back} />
-          <Button text="Delete" onClick={deleteButton} />
+          <DangerButton text="Delete" onClick={() => {back(); delete_(question.id)}} />
           <Button text="Save" type="submit" />
         </div>
       </form>

@@ -1,0 +1,30 @@
+from rest_framework import serializers
+from .models import Feedback, Question, CustomUser
+
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = "__all__"
+
+    def is_valid(self, *, raise_exception=False):
+        data = self.initial_data
+        # If user is creating an empty question, data['question'] will throw a KeyError
+        try:
+            if data['question_type'] == 'MultipleChoice':
+                if data['choice_1'] == '' or data['choice_2'] == '' or data['choice_3'] == '' or data['choice_4'] == '':
+                    raise serializers.ValidationError('Multiple choice questions must have 4 choices')
+        except KeyError:
+            pass
+        return super().is_valid(raise_exception=raise_exception)
+
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = "__all__"
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ("id", "username", "email", "is_business", "credit")

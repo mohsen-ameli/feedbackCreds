@@ -13,13 +13,12 @@ const variant = {
   }
 }
 
-const Button = ({ className, type = "button", ...props }) => {
+const Button = ({ className, type = "button", btnType, ...props }) => {
   return <>
     <motion.div whileHover={props.disabled && variant}>
       <button
-        className={`py-2 px-6 text-bold rounded-xl border-2
-                  bg-zinc-100 text-black hover:ease-in-out duration-75 ` +
-                    (!props.disabled ? `hover:text-white hover:bg-[#3A68E8] border-[#3A68E8] ` : `cursor-not-allowed opacity-75 border-red-500 hover:outline-red-500 `) +
+        className={`py-2 px-6 text-bold rounded-xl border-2 bg-zinc-100 text-black hover:ease-in-out duration-75 ` +
+                    (props.disabled ? `cursor-not-allowed opacity-75 border-red-500 hover:outline-red-500 ` : `hover:text-white hover:bg-[#3A68E8] border-[#3A68E8] `) +
                     className}
         type={type}
         {...props}
@@ -30,4 +29,20 @@ const Button = ({ className, type = "button", ...props }) => {
   </>
 }
 
-export default Button
+const DangerButton = ({ className, type = "button", btnType, ...props }) => {
+  return <>
+    <motion.div whileHover={props.disabled && variant}>
+      <button
+        className={`py-2 px-6 text-bold rounded-xl border-2 bg-zinc-100 text-black hover:ease-in-out duration-75 ` +
+                    (props.disabled ? `cursor-not-allowed opacity-75 border-red-500 hover:outline-red-500 ` : `hover:text-white hover:bg-[#de4c23] border-[#e83a3a] `) +
+                    className}
+        type={type}
+        {...props}
+      >
+        {props.text}
+      </button>
+    </motion.div>
+  </>
+}
+
+export {Button, DangerButton}
