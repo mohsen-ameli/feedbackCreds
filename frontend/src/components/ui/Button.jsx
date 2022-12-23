@@ -17,7 +17,7 @@ const Button = ({ className, type = "button", btnType, ...props }) => {
   return <>
     <motion.div whileHover={props.disabled && variant}>
       <button
-        className={`py-2 px-6 text-bold rounded-xl border-2 bg-zinc-100 text-black hover:ease-in-out duration-75 ` +
+        className={`py-2 px-5 text-bold rounded-xl border-2 bg-zinc-100 text-black hover:ease-in-out duration-75 ` +
                     (props.disabled ? `cursor-not-allowed opacity-75 border-red-500 hover:outline-red-500 ` : `hover:text-white hover:bg-[#3A68E8] border-[#3A68E8] `) +
                     className}
         type={type}

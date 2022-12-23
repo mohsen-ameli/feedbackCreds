@@ -23,7 +23,7 @@ class Question(models.Model):
 
 
 class Feedback(models.Model):
-    name = models.CharField(max_length=150, default="")
+    name = models.CharField(max_length=150, blank=True, default="")
     qr_code = models.CharField(max_length=150, blank=True, default="")
 
     # TODO: Add this whenever login and signup is implemented

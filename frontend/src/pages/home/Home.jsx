@@ -8,7 +8,7 @@ const Home = () => {
   return <>
     <Container>
       <div className="flex gap-6 justify-center">
-        <Button onClick={() => navigate("/new-feedback")} text="Create a new feedback form!" />
+        <Button onClick={() => navigate("/new-feedbacks")} text="Create a new feedback form!" />
         <Button onClick={() => console.log("take me to a new page")} text="Give a new feedback!" />
       </div>
     </Container>

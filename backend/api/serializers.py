@@ -6,16 +6,32 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question
         fields = "__all__"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def is_valid(self, *, raise_exception=False):
         data = self.initial_data
-        # If user is creating an empty question, data['question'] will throw a KeyError
+        
+        # Validate the feedback field
+        try:
+            if data['feedback'] == '':
+                raise serializers.ValidationError('Feedback field cannot be empty!')
+        except KeyError:
+            raise serializers.ValidationError('You must specify a feedback item!')
+
+        # Validating MultipleChoice questions
         try:
             if data['question_type'] == 'MultipleChoice':
                 if data['choice_1'] == '' or data['choice_2'] == '' or data['choice_3'] == '' or data['choice_4'] == '':
                     raise serializers.ValidationError('Multiple choice questions must have 4 choices')
         except KeyError:
             pass
+
         return super().is_valid(raise_exception=raise_exception)
+
+    def save(self, **kwargs):
+        data = self.validated_data
+        return super().save(**kwargs)
 
 
 class FeedbackSerializer(serializers.ModelSerializer):

@@ -1,7 +1,7 @@
 import { useContext, useRef } from "react";
 import { Button, DangerButton } from "../../../components/ui/Button";
 import Input from "../../../components/ui/TextInput";
-import { StageContext } from "./FirstStage";
+import { StageContext } from "./NewQuestions";
 import CardSpring from "./CardSpring";
 
 const WrittenResponse = ({ back }) => {

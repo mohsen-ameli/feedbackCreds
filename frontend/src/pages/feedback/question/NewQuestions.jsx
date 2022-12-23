@@ -1,52 +1,64 @@
 import { Button } from "../../../components/ui/Button"
-import Card from "./Card"
+import QuestionCard from "./QuestionCard"
 import * as defaults from "../../../data/Constants"
 import { createContext, useEffect, useState } from "react"
 import useFetch from "../../../components/hooks/useFetch"
 import axios from "axios"
+import Container from "../../../components/ui/Container"
+import { useNavigate, useParams } from "react-router-dom"
 
 export const StageContext = createContext()
 
 /**
  * This is the first stage. The user can create questions here.
  */
-const FirstStage = ({ toggle, numQuestions, setNumQuestions }) => {
+const NewQuestions = () => {
+  // Feedback ID
+  const { id } = useParams()
+  // Navigation
+  const navigate = useNavigate()
   // State to see if the user can add more questions
   const [canAdd, setCanAdd] = useState(true)
-  // Fetch commands
-  const {data, loading, error, fetchData} = useFetch("http://localhost:8000/questions/")
+  // Getting all the questions (GET)
+  const {data, loading, error, fetchData} = useFetch(`http://localhost:8000/${id}/questions/`)
+  // Number of questions
+  const [numQuestions, setNumQuestions] = useState()
 
-  // Add new question
+  // Add new question (POST)
   const add = async () => {
     // Adding a new empty question
-    await axios.post("http://localhost:8000/questions/", {})
+    const context = {
+      feedback: id
+    }
+    await axios.post(`http://localhost:8000/${id}/questions/`, context)
     // Refreshing the data
     fetchData()
     // Adding one to the number of questions
     setNumQuestions(current => current + 1)
   }
 
-  // Delete a question
+  // Delete a question (DELETE)
   const delete_ = async (index) => {
     // Deleting the question
-    await axios.delete(`http://localhost:8000/questions/${index}/`)
+    await axios.delete(`http://localhost:8000/${id}/questions/${index}/`)
     // Refreshing the data
     fetchData()
     // Subtracting one from the number of questions
     setNumQuestions(current => current - 1)
   }
 
-  // Updating a question
+  // Updating a question (PUT)
   const update = async (index, context) => {
-    await axios.put(`http://localhost:8000/questions/${index}/`, context)
+    await axios.put(`http://localhost:8000/${id}/questions/${index}/`, {...context, feedback: id})
     // Refreshing the data
     fetchData()
   }
 
   // Checking if the user can add more questions
   useEffect(() => {
+    setNumQuestions(data.length)
     numQuestions >= defaults.MAXIMUM_QUESTIONS ? setCanAdd(false) : setCanAdd(true)
-  }, [numQuestions])
+  }, [data.length, numQuestions])
 
   // Loading and error handling
   if (loading) {
@@ -56,7 +68,7 @@ const FirstStage = ({ toggle, numQuestions, setNumQuestions }) => {
   }
 
   return <>
-    <div className="flex flex-col items-center">
+    <Container className="flex flex-col items-center">
       <h1>
         We offer 3 different types of feedbacks, 
         that make the process of giving feedbacks 
@@ -70,15 +82,19 @@ const FirstStage = ({ toggle, numQuestions, setNumQuestions }) => {
       {/* Questions */}
       {data.map((question, index) => (
         <StageContext.Provider value={{ add, delete_, update, question, index }} key={index}>
-          <Card />
+          <QuestionCard />
         </StageContext.Provider>
       ))}
       
-      {/* Adding more questions */}
-      <Button disabled={!canAdd} text="Add" onClick={add} />
-      {!canAdd && <p className="mt-2 text-red-500">You can't add more than {defaults.MAXIMUM_QUESTIONS} questions.</p>}
-    </div>
+      <div className="flex items-center gap-x-4">
+        {/* Back button */}
+        <Button text="Back" onClick={() => navigate("/new-feedbacks")} />
+        {/* Adding more questions */}
+        <Button disabled={!canAdd} text="Add new question" onClick={add} />
+        {!canAdd && <p className="mt-2 text-red-500">You can't add more than {defaults.MAXIMUM_QUESTIONS} questions.</p>}
+      </div>
+    </Container>
   </>
 }
 
-export default FirstStage
+export default NewQuestions

@@ -3,7 +3,7 @@ import { Button, DangerButton } from "../../../components/ui/Button"
 import Input from "../../../components/ui/TextInput"
 import CardSpring from "./CardSpring"
 import { DEFAULT_NUM_OPTIONS } from "../../../data/Constants"
-import { StageContext } from "./FirstStage"
+import { StageContext } from "./NewQuestions"
 
 const MultipleChoice = ({ back }) => {
   const input = useRef()
