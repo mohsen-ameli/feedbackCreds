@@ -1,9 +1,10 @@
+# sudo apt install gcc, for psycopg2
 asgiref==3.6.0
 Django==4.1.4
 django-cors-headers==3.13.0
 django-filter==22.1
 djangorestframework==3.14.0
 Markdown==3.4.1
-psycopg2==2.9.5
+psycopg2-binary==2.9.5
 pytz==2022.7
 sqlparse==0.4.3
