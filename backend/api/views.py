@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from .models import Feedback, Question, CustomUser
 from .serializers import QuestionSerializer, UserSerializer, FeedbackSerializer
+from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.csrf import csrf_exempt
 
 
 # API Overview
@@ -24,8 +26,10 @@ def api_overview(request):
         'Feedback Update': '/feedbacks/<int:pk>/',
         'Feedback Delete': '/feedbacks/<int:pk>/',
 
-        "---------------": "--------------",
+        "----------------": "--------------",
+        'Feedback\'s Questions': '/feedback/<int:pk>/questions/',
 
+        "---------------": "--------------",
         'get-user': '/get-user/<int:pk>/'
     }
     return Response(api_urls)
@@ -34,6 +38,7 @@ def api_overview(request):
 # ----------------- QUESTION ----------------- #
 
 # Listing all the questions
+@csrf_exempt
 @api_view(['GET', 'POST'])
 def handle_questions(request, feed_pk):
     # GET
@@ -60,6 +65,7 @@ def handle_questions(request, feed_pk):
 
 
 # Handling a single question
+@csrf_exempt
 @api_view(['GET', 'PUT', 'DELETE'])
 def handle_question(request, feed_pk, pk):
     # GET
@@ -90,8 +96,9 @@ def handle_question(request, feed_pk, pk):
         return Response({"message": "Question deleted successfully"})
 
 
-# ----------------- Feedback ----------------- #
+# ----------------- FEEDBACK ----------------- #
 
+@csrf_exempt
 @api_view(['GET', 'POST'])
 def handle_feedbacks(request):
     # GET
@@ -117,6 +124,7 @@ def handle_feedbacks(request):
         return Response(serializer.data)
 
 
+@csrf_exempt
 @api_view(['GET', 'PUT', 'DELETE'])
 def handle_feedback(request, pk):
     # GET
@@ -145,6 +153,20 @@ def handle_feedback(request, pk):
         feedback = Feedback.objects.get(pk=pk)
         feedback.delete()
         return Response({"message": "Feedback deleted successfully"})
+
+
+# ----------------- FEEDBACK'S QUESTIONS ----------------- #
+
+@api_view(['GET'])
+def get_feedback_questions(request, pk):
+    try:
+        feedback = Feedback.objects.get(pk=pk)
+    except ObjectDoesNotExist:
+        return Response({"message": "Feedback does not exist"}, status=400)
+    questions = Question.objects.filter(feedback=feedback)
+    serializer = QuestionSerializer(questions, many=True)
+    return Response(serializer.data)
+
 
 # ----------------- USER ----------------- #
 

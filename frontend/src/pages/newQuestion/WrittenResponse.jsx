@@ -1,6 +1,6 @@
 import { useContext, useRef } from "react";
-import { Button, DangerButton } from "../../../components/ui/Button";
-import Input from "../../../components/ui/TextInput";
+import { Button, DangerButton } from "../../components/ui/Button";
+import Input from "../../components/ui/TextInput";
 import { StageContext } from "./NewQuestions";
 import CardSpring from "./CardSpring";
 

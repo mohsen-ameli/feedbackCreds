@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, DangerButton } from "../../../components/ui/Button";
-import Card from "../../../components/ui/Card";
-import TextInput from "../../../components/ui/TextInput";
-import Counter from "../../../components/ui/Counter";
+import { Button, DangerButton } from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
+import TextInput from "../../components/ui/TextInput";
+import Counter from "../../components/ui/Counter";
 import axios from "axios";
 
 const FeedbackCard = ({ index, feedback, reFetch }) => {
@@ -19,17 +19,17 @@ const FeedbackCard = ({ index, feedback, reFetch }) => {
   // To keep track of the current name
   const currentName = useRef(feedback?.name)
 
+  // Saving the new name (PUT)
   const save = async (e) => {
     e.preventDefault()
     setChanged(false)
     currentName.current = name
 
-    // Saving the new name
-    await axios.put(`http://localhost:8000/feedbacks/${feedback.id}`, { name })
+    await axios.put(`/feedbacks/${feedback.id}`, { name })
   }
 
+  // Canceling the name change
   const cancel = () => {
-    console.log("current: ", currentName.current)
     setChanged(false)
     setName(currentName.current)
   }
@@ -40,38 +40,39 @@ const FeedbackCard = ({ index, feedback, reFetch }) => {
     setName(e.target.value)
   }
 
+  // Card open/close animation
   const animate = {
     height: isOpen ? 300 : 100
   }
 
   return <>
     <Card key={index} isOpen={isOpen} animate={animate}>
-      <div className="w-full h-full flex items-center justify-around gap-x-2">
+      <div className="w-full h-full flex items-center justify-around">
         {/* Counter */}
         <Counter index={index} />
 
         {/* Form */}
         <form onSubmit={save} className="w-full flex items-center gap-x-2 mx-8">
           {/* Feedback name */}
-          <label>Name: </label>
-          <TextInput
-            placeholder="Name"
-            className="ml-4 w-[12rem] md:w-auto"
-            value={name}
-            onChange={handleChange}
-          />
+          <div className="flex flex-col items-start gap-y-1">
+            {/* <label>Name*</label> */}
+            <TextInput
+              placeholder="Name"
+              className="py-5 w-[10rem] md:w-auto"
+              value={name}
+              onChange={handleChange}
+            />
+          </div>
 
           {/* Buttons */}
           <div className="flex self-center gap-x-2 ml-auto">
-            {changed && <>
+            {changed ? <>
               <Button text="Save" type="submit" />
               <DangerButton text="Cancel" onClick={cancel} />
-            </>}
+            </> : <Button text="Next" onClick={next} />}
           </div>
-          <Button text="Next" onClick={next} />
+          <Button className="px-2" text="QR-Code" onClick={() => navigate(`/${feedback.id}/qr-code`)} />
         </form>
-
-        <Button className="px-2" text="QR-Code" onClick={() => setIsOpen(!isOpen)} />
       </div>
     </Card>
   </>;

@@ -2,10 +2,10 @@ import { useContext, useState } from "react"
 import MultipleChoice from "./MultipleChoice"
 import TrueOrFalse from "./TrueOrFalse"
 import WrittenResponse from "./WrittenResponse"
-import { Button } from "../../../components/ui/Button"
-import Counter from "../../../components/ui/Counter"
+import { Button } from "../../components/ui/Button"
+import Counter from "../../components/ui/Counter"
 import { StageContext } from "./NewQuestions"
-import Card from "../../../components/ui/Card"
+import Card from "../../components/ui/Card"
 
 const QuestionCard = () => {
   // Question type, used locally in this component
@@ -29,7 +29,7 @@ const QuestionCard = () => {
   }
 
   return <>
-    <Card isOpen={isOpen} animate={animate}>
+    <Card isOpen={isOpen} animate={animate} className="px-4">
       {/* Sub-sections */}
       {isOpen && QuestionType === "Multiple-choice" && (
         <MultipleChoice back={() => handleClick(null)} />
@@ -61,30 +61,28 @@ const QuestionCard = () => {
 
 const Sections = ({ handleClick }) => {
   return <>
-      <div onClick={() => handleClick("Multiple-choice")} className="w-1/3 h-full text-lg flex flex-col items-center justify-center">
-        <button className="p-5">
-          <h1>Multiple Choice</h1>
-        </button>
-      </div>
-      <div onClick={() => handleClick("True-or-false")} className="w-1/3 h-full text-lg flex flex-col items-center justify-center">
-        <button className="p-5">
-          <h1>True or False</h1>
-        </button>
-      </div>
-      <div onClick={() => handleClick("Written-response")} className="w-1/3 h-full text-lg flex flex-col items-center justify-center">
-        <button className="p-5">
-          <h1>Written Response</h1>
-        </button>
-      </div>
+    <div onClick={() => handleClick("Multiple-choice")} className="w-1/3 h-full text-lg flex flex-col items-center justify-center">
+      <button className="p-5">
+        <h1>Multiple Choice</h1>
+      </button>
+    </div>
+    <div onClick={() => handleClick("True-or-false")} className="w-1/3 h-full text-lg flex flex-col items-center justify-center">
+      <button className="p-5">
+        <h1>True or False</h1>
+      </button>
+    </div>
+    <div onClick={() => handleClick("Written-response")} className="w-1/3 h-full text-lg flex flex-col items-center justify-center">
+      <button className="p-5">
+        <h1>Written Response</h1>
+      </button>
+    </div>
   </>
 }
 
 const SavedFeedback = ({ question, handleClick }) => {
   return <>
-    <div className="w-full h-full flex items-center justify-between mx-4">
-      <h1 className="text-lg">{ splitTitle(question.question_type) } saved!</h1>
-      <Button onClick={() => handleClick(question.question_type)} text="Change"></Button>
-    </div>
+    <h1 className="text-lg">{ splitTitle(question.question_type) } saved!</h1>
+    <Button onClick={() => handleClick(question.question_type)} text="Change"></Button>
   </>
 }
 

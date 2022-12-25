@@ -1,10 +1,9 @@
-import { Button } from "../../../components/ui/Button"
+import { Button } from "../../components/ui/Button"
 import QuestionCard from "./QuestionCard"
-import * as defaults from "../../../data/Constants"
+import * as defaults from "../../data/Constants"
 import { createContext, useEffect, useState } from "react"
-import useFetch from "../../../components/hooks/useFetch"
+import useFetch from "../../components/hooks/useFetch"
 import axios from "axios"
-import Container from "../../../components/ui/Container"
 import { useNavigate, useParams } from "react-router-dom"
 
 export const StageContext = createContext()
@@ -20,7 +19,7 @@ const NewQuestions = () => {
   // State to see if the user can add more questions
   const [canAdd, setCanAdd] = useState(true)
   // Getting all the questions (GET)
-  const {data, loading, error, fetchData} = useFetch(`http://localhost:8000/${id}/questions/`)
+  const {data, loading, error, fetchData} = useFetch(`/${id}/questions/`)
   // Number of questions
   const [numQuestions, setNumQuestions] = useState()
 
@@ -30,7 +29,7 @@ const NewQuestions = () => {
     const context = {
       feedback: id
     }
-    await axios.post(`http://localhost:8000/${id}/questions/`, context)
+    await axios.post(`/${id}/questions/`, context)
     // Refreshing the data
     fetchData()
     // Adding one to the number of questions
@@ -40,7 +39,7 @@ const NewQuestions = () => {
   // Delete a question (DELETE)
   const delete_ = async (index) => {
     // Deleting the question
-    await axios.delete(`http://localhost:8000/${id}/questions/${index}/`)
+    await axios.delete(`/${id}/questions/${index}/`)
     // Refreshing the data
     fetchData()
     // Subtracting one from the number of questions
@@ -49,7 +48,7 @@ const NewQuestions = () => {
 
   // Updating a question (PUT)
   const update = async (index, context) => {
-    await axios.put(`http://localhost:8000/${id}/questions/${index}/`, {...context, feedback: id})
+    await axios.put(`/${id}/questions/${index}/`, {...context, feedback: id})
     // Refreshing the data
     fetchData()
   }
@@ -68,7 +67,7 @@ const NewQuestions = () => {
   }
 
   return <>
-    <Container className="flex flex-col items-center">
+    <div className="flex flex-col items-center">
       <h1>
         We offer 3 different types of feedbacks, 
         that make the process of giving feedbacks 
@@ -93,7 +92,7 @@ const NewQuestions = () => {
         <Button disabled={!canAdd} text="Add new question" onClick={add} />
         {!canAdd && <p className="mt-2 text-red-500">You can't add more than {defaults.MAXIMUM_QUESTIONS} questions.</p>}
       </div>
-    </Container>
+    </div>
   </>
 }
 

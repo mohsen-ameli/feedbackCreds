@@ -9,5 +9,7 @@ urlpatterns = [
     path('feedbacks/', views.handle_feedbacks, name="handle-feedbacks"),
     path('feedbacks/<int:pk>', views.handle_feedback, name="handle-feedback"),
 
+    path('feedback/<int:pk>/questions/', views.get_feedback_questions, name="get-feedback-questions"),
+
     path('get-user/<int:pk>/', views.get_user, name="get-user"),
 ]
