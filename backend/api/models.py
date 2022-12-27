@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import AbstractUser
+import uuid
 
 
 class Question(models.Model):
@@ -24,7 +25,6 @@ class Question(models.Model):
 
 class Feedback(models.Model):
     name = models.CharField(max_length=150, blank=True, default="")
-    qr_code = models.CharField(max_length=150, blank=True, default="")
 
     # TODO: Add this whenever login and signup is implemented
     # user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, blank=True, null=True)
@@ -33,13 +33,28 @@ class Feedback(models.Model):
         return f"pk: {self.pk} name: {self.name}"
 
     def save(self, *args, **kwargs):
-        print("saving: ", self.qr_code)
         super().save(*args, **kwargs)
 
 
+class FeedbackResponse(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    feedback = models.ForeignKey("Feedback", on_delete=models.CASCADE)
+    response = models.CharField(max_length=1000, blank=True, default="")
+
+    def __str__(self):
+        return f"feedback: {self.feedback}"
+
+
 class CustomUser(AbstractUser):
+    TIERS = (
+        (0, 'Free'),
+        (1, 'Mid'),
+        (2, 'Pro'),
+    )
+
     is_business = models.BooleanField(default=False)
     credit = models.FloatField(blank=True, default=0.0)
+    # tier = models.IntegerField(choices=TIERS, default=TIERS[0])
 
     def __str__(self):
         return self.username

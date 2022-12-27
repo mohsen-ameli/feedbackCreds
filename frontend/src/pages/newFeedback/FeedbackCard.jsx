@@ -25,7 +25,7 @@ const FeedbackCard = ({ index, feedback, reFetch }) => {
     setChanged(false)
     currentName.current = name
 
-    await axios.put(`/feedbacks/${feedback.id}`, { name })
+    await axios.put(`/feedbacks/${feedback.id}/`, { name })
   }
 
   // Canceling the name change

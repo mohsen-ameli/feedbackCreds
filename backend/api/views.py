@@ -1,8 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from .models import Feedback, Question, CustomUser
-from .serializers import QuestionSerializer, UserSerializer, FeedbackSerializer
+from .models import Feedback, Question, CustomUser, FeedbackResponse
+from .serializers import QuestionSerializer, UserSerializer, FeedbackSerializer, FeedbackResponseSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 
@@ -27,7 +27,8 @@ def api_overview(request):
         'Feedback Delete': '/feedbacks/<int:pk>/',
 
         "----------------": "--------------",
-        'Feedback\'s Questions': '/feedback/<int:pk>/questions/',
+        'Feedback\'s Questions list': '/feedback/<int:pk>/questions/',
+        'New Feedback!': '/feedback/<int:pk>/questions/',
 
         "---------------": "--------------",
         'get-user': '/get-user/<int:pk>/'
@@ -155,17 +156,89 @@ def handle_feedback(request, pk):
         return Response({"message": "Feedback deleted successfully"})
 
 
-# ----------------- FEEDBACK'S QUESTIONS ----------------- #
+# ----------------- FEEDBACK RESPONSE ----------------- #
 
-@api_view(['GET'])
-def get_feedback_questions(request, pk):
+######## You could split this up into two views, but for restful purposes, I left it as one ########
+# List all feedback responses, or create a new feedback response
+@csrf_exempt
+@api_view(['GET', 'POST'])
+def handle_feedback_responses(request, pk):
+    # GET
+    if request.method == 'GET':
+        responses = FeedbackResponse.objects.filter(feedback=pk)
+        serializer = FeedbackResponseSerializer(responses, many=True)
+        if serializer.data == []:
+            return Response({"message": "Invalid feedback id!"}, status=404)
+        return Response(serializer.data)
+
+    # POST
+    elif request.method == 'POST':
+        try:
+            FeedbackResponse.objects.create(feedback=Feedback.objects.get(pk=pk))
+        except Exception as e:
+            return Response({"message": e}, status=400)
+
+        return Response({"message": "Feedback response created successfully"})
+
+
+# GET and PUT for a single feedback response (filled response)
+@api_view(['GET', 'POST'])
+def handle_feedback_response(request, uuid):
+    # Validating that the FeedbackResponse exists
     try:
-        feedback = Feedback.objects.get(pk=pk)
+        response_obj = FeedbackResponse.objects.get(id=uuid)
     except ObjectDoesNotExist:
-        return Response({"message": "Feedback does not exist"}, status=400)
-    questions = Question.objects.filter(feedback=feedback)
-    serializer = QuestionSerializer(questions, many=True)
-    return Response(serializer.data)
+        return Response({"message": "Invalid QRCode!"}, status=400)
+
+    feedback = response_obj.feedback
+
+    # GET
+    if request.method == 'GET':
+        questions = Question.objects.filter(feedback=feedback)
+        serializer = QuestionSerializer(questions, many=True)
+        return Response(serializer.data)
+    
+    # PUT
+    elif request.method == 'PUT':
+        # TODO: 1: check if the feedback pk and qr code represent the same Feedback
+        # The feedback object
+        # feedback = Feedback.objects.get(pk=pk)
+
+        # Serializing the data
+        serializer = FeedbackResponseSerializer(feedback, request.data)
+
+        # Validating the data
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            return Response({"message": e.detail}, status=400)
+
+        # {"feedback": 1}
+
+        # TODO: 2: Check if the QRCode has expired (if the user has already submitted their feedback)
+        # user = CustomUser.objects.get(pk=pk)
+
+        # if user.is_business:
+        #     print("User is a business", uuid)
+        # else:
+        #     print("User is a customer", uuid)
+
+        # TODO: If the user is bussiness, return an empty object of FeedbackResponse, with qr code filled
+        # If the user is a customer, return the same object of FeedbackResponse, BUT with response filled
+        # For the customer to be allowed to fill the response, the qr code must be valid (Not used yet). so just check if the response is full
+        
+        return Response({})
+
+
+# Getting the feedback of the FeedbackResponse based on its uuid
+@api_view(['GET'])
+def get_feedback_from_uuid(request, uuid):
+    try:
+        feedback = FeedbackResponse.objects.get(id=uuid).feedback
+        serializer = FeedbackSerializer(feedback)
+        return Response(serializer.data)
+    except ObjectDoesNotExist:
+        return Response({"message": "Invalid feedback!"}, status=400)
 
 
 # ----------------- USER ----------------- #

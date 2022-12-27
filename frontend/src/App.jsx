@@ -18,7 +18,7 @@ const App = () => {
           <Route path="/new-feedbacks" element={<NewFeedback />} />
           <Route path="/:id/new-questions" element={<NewQuestions />} />
           <Route path="/:id/qr-code" element={<QuestionQRCode />} />
-          <Route path="/feedback/:id/questions" element={<Feedback />} />
+          <Route path="/feedback-response/:uuid" element={<Feedback />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
