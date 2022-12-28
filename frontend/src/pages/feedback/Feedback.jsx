@@ -5,6 +5,7 @@ import MultipleChoice from "./MultipleChoice"
 import TrueOrFalse from "./TrueOrFalse"
 import WrittenResponse from "./WrittenResponse"
 import { Button } from "../../components/ui/Button"
+import Container from "../../components/ui/Container"
 import { useState } from "react"
 import axios from "axios"
 
@@ -47,7 +48,7 @@ const Feedback = () => {
   }
 
   return (
-    <>
+    <Container>
       <h1 className="text-2xl font-semibold text-center">{feedback.name}</h1>
       <h1>By answering these questions, you will be rewarded with 10 FC</h1>
       <h1 className="text-rose-500 font-bold">
@@ -95,7 +96,7 @@ const Feedback = () => {
       </form>
 
       {error && <p className="text-xl font-bold text-red-600">{error}</p>}
-    </>
+    </Container>
   )
 }
 

@@ -5,6 +5,7 @@ import { createContext, useEffect, useState } from "react"
 import useFetch from "../../components/hooks/useFetch"
 import axios from "axios"
 import { useNavigate, useParams } from "react-router-dom"
+import Container from "../../components/ui/Container"
 
 export const StageContext = createContext()
 
@@ -66,44 +67,46 @@ const NewQuestions = () => {
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <h1>
-        We offer 3 different types of feedbacks, that make the process of giving
-        feedbacks for your customers, easy and fast.
-      </h1>
-      <h1>
-        You can make {defaults.MINIMUM_QUESTIONS}-{defaults.MAXIMUM_QUESTIONS}{" "}
-        questions.
-      </h1>
-      <small>
-        Notice: You cannot make more than 1 written response. This is so that
-        customers don't get bored writing essays. or even worse be too lazy to
-        even write anything. So try avoidcing written responses as much as
-        possible
-      </small>
+    <Container>
+      <div className="flex flex-col items-center">
+        <h1>
+          We offer 3 different types of feedbacks, that make the process of
+          giving feedbacks for your customers, easy and fast.
+        </h1>
+        <h1>
+          You can make {defaults.MINIMUM_QUESTIONS}-{defaults.MAXIMUM_QUESTIONS}{" "}
+          questions.
+        </h1>
+        <small>
+          Notice: You cannot make more than 1 written response. This is so that
+          customers don't get bored writing essays. or even worse be too lazy to
+          even write anything. So try avoidcing written responses as much as
+          possible
+        </small>
 
-      {/* Questions */}
-      {data.map((question, index) => (
-        <StageContext.Provider
-          value={{ add, delete_, update, question, index }}
-          key={index}
-        >
-          <QuestionCard />
-        </StageContext.Provider>
-      ))}
+        {/* Questions */}
+        {data.map((question, index) => (
+          <StageContext.Provider
+            value={{ add, delete_, update, question, index }}
+            key={index}
+          >
+            <QuestionCard />
+          </StageContext.Provider>
+        ))}
 
-      <div className="flex items-center gap-x-4">
-        {/* Back button */}
-        <Button text="Back" onClick={() => navigate("/new-feedbacks")} />
-        {/* Adding more questions */}
-        <Button disabled={!canAdd} text="Add new question" onClick={add} />
-        {!canAdd && (
-          <p className="mt-2 text-red-500">
-            You can't add more than {defaults.MAXIMUM_QUESTIONS} questions.
-          </p>
-        )}
+        <div className="flex items-center gap-x-4">
+          {/* Back button */}
+          <Button text="Back" onClick={() => navigate("/new-feedbacks")} />
+          {/* Adding more questions */}
+          <Button disabled={!canAdd} text="Add new question" onClick={add} />
+          {!canAdd && (
+            <p className="mt-2 text-red-500">
+              You can't add more than {defaults.MAXIMUM_QUESTIONS} questions.
+            </p>
+          )}
+        </div>
       </div>
-    </div>
+    </Container>
   )
 }
 

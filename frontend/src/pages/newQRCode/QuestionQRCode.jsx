@@ -3,6 +3,7 @@ import QRCode from "react-qr-code"
 import { Button } from "../../components/ui/Button"
 import axios from "axios"
 import useFetch from "../../components/hooks/useFetch"
+import Container from "../../components/ui/Container"
 
 const QuestionQRCode = () => {
   const { id } = useParams()
@@ -10,6 +11,13 @@ const QuestionQRCode = () => {
   const { data, loading, error, fetchData } = useFetch(
     `/feedback-responses/${id}/`
   )
+  const { data: feedback } = useFetch(`/feedbacks/${id}/`)
+
+  // Creating a new QRCode
+  const createQRCode = async () => {
+    await axios.post(`/feedback-responses/${id}/`)
+    fetchData()
+  }
 
   // Loading and error handling
   if (loading) {
@@ -18,17 +26,14 @@ const QuestionQRCode = () => {
     return <p>{error}</p>
   }
 
-  const createQRCode = async () => {
-    await axios.post(`/feedback-responses/${id}/`)
-    fetchData()
-  }
-
   return (
-    <>
-      {/* <h1>QRCode for {  }</h1> */}
+    <Container>
+      <h1 className="text-xl font-bold text-center">
+        QRCodes for {feedback.name}
+      </h1>
       <h1>
-        This is a unique QRCode, for one single instance use. It will expire,
-        once the user has scanned and submitted their feedback.
+        These are unique QRCodes, for single instance uses. They will expire,
+        once the customer has scanned and submitted their feedback.
       </h1>
 
       <div className="grid grid-cols-3 gap-6 my-8">
@@ -55,7 +60,7 @@ const QuestionQRCode = () => {
       </div>
 
       <Button text="Generate new QRCode" onClick={createQRCode} />
-    </>
+    </Container>
   )
 }
 

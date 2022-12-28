@@ -6,8 +6,6 @@ from .serializers import QuestionSerializer, FeedbackSerializer, FeedbackRespons
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 
-# {"title": "hey there", "question_type":"True-or-false", "choices": ["Trueeee", "False"], "feedback": 1}
-
 
 # API Overview
 @api_view(['GET'])
@@ -29,8 +27,11 @@ def api_overview(request):
         'Feedback Delete': '/feedbacks/<int:pk>/',
 
         "----------------": "--------------",
-        'Feedback\'s Questions list': '/feedback/<int:pk>/questions/',
-        'New Feedback!': '/feedback/<int:pk>/questions/',
+        'Feedback\'s Question List': '/feedback-response/<uuid:uuid>/',
+        'Feedback\'s Question Update': '/feedback-response/<uuid:uuid>/',
+
+        'Feedback response List': '/feedback-responses/<int:feed_pk>/',
+        'Feedback response Create': '/feedback-responses/<int:feed_pk>/',
 
         "---------------": "--------------",
         'get-user': '/get-user/<int:pk>/'
@@ -161,22 +162,22 @@ def handle_feedback(request, pk):
 # ----------------- FEEDBACK RESPONSE ----------------- #
 
 ######## You could split this up into two views, but for restful purposes, I left it as one ########
-# List all feedback responses, or create a new feedback response
+# List all feedback responses, or create a new one
 @csrf_exempt
 @api_view(['GET', 'POST'])
-def handle_feedback_responses(request, pk):
-    # GET
+def handle_feedback_responses(request, feed_pk):
+    # GET (For bussinesses to see their feedback responses)
     if request.method == 'GET':
-        responses = FeedbackResponse.objects.filter(feedback=pk)
+        responses = FeedbackResponse.objects.filter(feedback=feed_pk)
         serializer = FeedbackResponseSerializer(responses, many=True)
         # if serializer.data == []:
         #     return Response({"message": "Invalid feedback id!"}, status=404)
         return Response(serializer.data)
 
-    # POST
+    # POST (For the customer to create a new feedback response)
     elif request.method == 'POST':
         try:
-            FeedbackResponse.objects.create(feedback=Feedback.objects.get(pk=pk))
+            FeedbackResponse.objects.create(feedback=Feedback.objects.get(pk=feed_pk))
         except Exception as e:
             return Response({"message": e}, status=400)
 
