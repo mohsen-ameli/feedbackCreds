@@ -16,19 +16,17 @@ const QuestionCard = () => {
   const { question, index } = useContext(StageContext)
 
   // Handle click on each question type
-  const handleClick = type => {
+  const handleClick = (type) => {
     setQuestionType(type)
-    setIsOpen(current => !current)
+    setIsOpen((current) => !current)
   }
 
   // Animate the card
   const animate = {
-    height: isOpen ?
-    (QuestionType === "Multiple-choice" ? 250 : 175)
-    : 100
+    height: isOpen ? (QuestionType === "Multiple-choice" ? 250 : 175) : 100,
   }
 
-  return <>
+  return (
     <Card isOpen={isOpen} animate={animate} className="px-4">
       {/* Sub-sections */}
       {isOpen && QuestionType === "Multiple-choice" && (
@@ -42,51 +40,69 @@ const QuestionCard = () => {
       )}
 
       {/* Main section */}
-      {!isOpen && <>
-        {/* Question counter */}
-        <Counter index={index} />
+      {!isOpen && (
+        <>
+          {/* Question counter */}
+          <Counter index={index} />
 
-        {/* Questions */}
-        {question.title !== "" ?
-          // Feedback is saved
-          <SavedFeedback handleClick={handleClick} question={question} />
-          :
-          // New feedback
-          <Sections handleClick={handleClick} />
-        }
-      </>}
+          {/* Questions */}
+          {question.title !== "" ? (
+            // Feedback is saved
+            <SavedFeedback handleClick={handleClick} question={question} />
+          ) : (
+            // New feedback
+            <Sections handleClick={handleClick} />
+          )}
+        </>
+      )}
     </Card>
-  </>
+  )
 }
 
 const Sections = ({ handleClick }) => {
-  return <>
-    <div onClick={() => handleClick("Multiple-choice")} className="w-1/3 h-full text-lg flex flex-col items-center justify-center">
-      <button className="p-5">
-        <h1>Multiple Choice</h1>
-      </button>
-    </div>
-    <div onClick={() => handleClick("True-or-false")} className="w-1/3 h-full text-lg flex flex-col items-center justify-center">
-      <button className="p-5">
-        <h1>True or False</h1>
-      </button>
-    </div>
-    <div onClick={() => handleClick("Written-response")} className="w-1/3 h-full text-lg flex flex-col items-center justify-center">
-      <button className="p-5">
-        <h1>Written Response</h1>
-      </button>
-    </div>
-  </>
+  return (
+    <>
+      <div
+        onClick={() => handleClick("Multiple-choice")}
+        className="w-1/3 h-full text-lg flex flex-col items-center justify-center"
+      >
+        <button className="p-5">
+          <h1>Multiple Choice</h1>
+        </button>
+      </div>
+      <div
+        onClick={() => handleClick("True-or-false")}
+        className="w-1/3 h-full text-lg flex flex-col items-center justify-center"
+      >
+        <button className="p-5">
+          <h1>True or False</h1>
+        </button>
+      </div>
+      <div
+        onClick={() => handleClick("Written-response")}
+        className="w-1/3 h-full text-lg flex flex-col items-center justify-center"
+      >
+        <button className="p-5">
+          <h1>Written Response</h1>
+        </button>
+      </div>
+    </>
+  )
 }
 
 const SavedFeedback = ({ question, handleClick }) => {
-  return <>
-    <h1 className="text-lg">{ splitTitle(question.question_type) } saved!</h1>
-    <Button onClick={() => handleClick(question.question_type)} text="Change"></Button>
-  </>
+  return (
+    <>
+      <h1 className="text-lg">{splitTitle(question.question_type)} saved!</h1>
+      <Button
+        onClick={() => handleClick(question.question_type)}
+        text="Change"
+      />
+    </>
+  )
 }
 
-const splitTitle = str => {
+const splitTitle = (str) => {
   const words = str.split("-")
   return words.join(" ")
 }

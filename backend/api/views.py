@@ -1,10 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from .models import Feedback, Question, CustomUser, FeedbackResponse
-from .serializers import QuestionSerializer, UserSerializer, FeedbackSerializer, FeedbackResponseSerializer
+from .models import Feedback, Question, FeedbackResponse
+from .serializers import QuestionSerializer, FeedbackSerializer, FeedbackResponseSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
+
+# {"title": "hey there", "question_type":"True-or-false", "choices": ["Trueeee", "False"], "feedback": 1}
 
 
 # API Overview
@@ -167,8 +169,8 @@ def handle_feedback_responses(request, pk):
     if request.method == 'GET':
         responses = FeedbackResponse.objects.filter(feedback=pk)
         serializer = FeedbackResponseSerializer(responses, many=True)
-        if serializer.data == []:
-            return Response({"message": "Invalid feedback id!"}, status=404)
+        # if serializer.data == []:
+        #     return Response({"message": "Invalid feedback id!"}, status=404)
         return Response(serializer.data)
 
     # POST
@@ -182,9 +184,9 @@ def handle_feedback_responses(request, pk):
 
 
 # GET and PUT for a single feedback response (filled response)
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'PUT'])
 def handle_feedback_response(request, uuid):
-    # Validating that the FeedbackResponse exists
+    # Validating that the FeedbackResponse exists (QRCode is valid)
     try:
         response_obj = FeedbackResponse.objects.get(id=uuid)
     except ObjectDoesNotExist:
@@ -192,7 +194,7 @@ def handle_feedback_response(request, uuid):
 
     feedback = response_obj.feedback
 
-    # GET
+    # GET (Questions based on the feedback property of FeedbackResponse)
     if request.method == 'GET':
         questions = Question.objects.filter(feedback=feedback)
         serializer = QuestionSerializer(questions, many=True)
@@ -200,12 +202,18 @@ def handle_feedback_response(request, uuid):
     
     # PUT
     elif request.method == 'PUT':
-        # TODO: 1: check if the feedback pk and qr code represent the same Feedback
-        # The feedback object
-        # feedback = Feedback.objects.get(pk=pk)
+        # Checking if the feedback response has already been submitted
+        if response_obj.is_submitted:
+            return Response({"message": "Feedback already submitted!"}, status=400)
+        
+        # print(request.user)
+        # user = User.objects.get(pk=request.user.pk)
+
+        # if user.is_business:
+        #     return Response({"message": "Businesses cannot submit feedbacks!"})
 
         # Serializing the data
-        serializer = FeedbackResponseSerializer(feedback, request.data)
+        serializer = FeedbackResponseSerializer(response_obj, request.data)
 
         # Validating the data
         try:
@@ -213,21 +221,18 @@ def handle_feedback_response(request, uuid):
         except ValidationError as e:
             return Response({"message": e.detail}, status=400)
 
-        # {"feedback": 1}
+        # {"feedback": 1, "response": "hi there", "is_submitted": true}
 
-        # TODO: 2: Check if the QRCode has expired (if the user has already submitted their feedback)
-        # user = CustomUser.objects.get(pk=pk)
-
-        # if user.is_business:
-        #     print("User is a business", uuid)
-        # else:
-        #     print("User is a customer", uuid)
+        # user.credit += 10
+        # user.save()
 
         # TODO: If the user is bussiness, return an empty object of FeedbackResponse, with qr code filled
         # If the user is a customer, return the same object of FeedbackResponse, BUT with response filled
         # For the customer to be allowed to fill the response, the qr code must be valid (Not used yet). so just check if the response is full
         
-        return Response({})
+        # Saving the data
+        serializer.save()
+        return Response({"message": "Feedback response svaed successfully!"})
 
 
 # Getting the feedback of the FeedbackResponse based on its uuid
@@ -239,13 +244,3 @@ def get_feedback_from_uuid(request, uuid):
         return Response(serializer.data)
     except ObjectDoesNotExist:
         return Response({"message": "Invalid feedback!"}, status=400)
-
-
-# ----------------- USER ----------------- #
-
-# Getting the user's information
-@api_view(['GET'])
-def get_user(request, pk):
-    user = CustomUser.objects.get(pk=pk)
-    serializer = UserSerializer(user)
-    return Response(serializer.data)

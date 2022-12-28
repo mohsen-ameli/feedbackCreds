@@ -1,10 +1,10 @@
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button, DangerButton } from "../../components/ui/Button";
-import Card from "../../components/ui/Card";
-import TextInput from "../../components/ui/TextInput";
-import Counter from "../../components/ui/Counter";
-import axios from "axios";
+import { useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { Button, DangerButton } from "../../components/ui/Button"
+import Card from "../../components/ui/Card"
+import TextInput from "../../components/ui/TextInput"
+import Counter from "../../components/ui/Counter"
+import axios from "axios"
 
 const FeedbackCard = ({ index, feedback, reFetch }) => {
   // Navigation
@@ -34,18 +34,17 @@ const FeedbackCard = ({ index, feedback, reFetch }) => {
     setName(currentName.current)
   }
 
-  const handleChange = e => {
-    if (!changed)
-      setChanged(true)
+  const handleChange = (e) => {
+    if (!changed) setChanged(true)
     setName(e.target.value)
   }
 
   // Card open/close animation
   const animate = {
-    height: isOpen ? 300 : 100
+    height: isOpen ? 300 : 100,
   }
 
-  return <>
+  return (
     <Card key={index} isOpen={isOpen} animate={animate}>
       <div className="w-full h-full flex items-center justify-around">
         {/* Counter */}
@@ -66,16 +65,24 @@ const FeedbackCard = ({ index, feedback, reFetch }) => {
 
           {/* Buttons */}
           <div className="flex self-center gap-x-2 ml-auto">
-            {changed ? <>
-              <Button text="Save" type="submit" />
-              <DangerButton text="Cancel" onClick={cancel} />
-            </> : <Button text="Next" onClick={next} />}
+            {changed ? (
+              <>
+                <Button text="Save" type="submit" />
+                <DangerButton text="Cancel" onClick={cancel} />
+              </>
+            ) : (
+              <Button text="Next" onClick={next} />
+            )}
           </div>
-          <Button className="px-2" text="QR-Code" onClick={() => navigate(`/${feedback.id}/qr-code`)} />
+          <Button
+            className="px-2"
+            text="QR-Code"
+            onClick={() => navigate(`/${feedback.id}/qr-code`)}
+          />
         </form>
       </div>
     </Card>
-  </>;
+  )
 }
- 
-export default FeedbackCard;
+
+export default FeedbackCard

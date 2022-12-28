@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Feedback, Question, CustomUser, FeedbackResponse
+from .models import Feedback, Question, FeedbackResponse
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,9 +44,3 @@ class FeedbackResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = FeedbackResponse
         fields = "__all__"
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ("id", "username", "email", "is_business", "credit")

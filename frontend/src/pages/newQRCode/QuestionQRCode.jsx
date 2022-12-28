@@ -1,47 +1,62 @@
-import { Link, useParams } from 'react-router-dom'
-import QRCode from "react-qr-code";
-import { Button } from '../../components/ui/Button'
-import axios from 'axios';
-import useFetch from '../../components/hooks/useFetch';
+import { Link, useParams } from "react-router-dom"
+import QRCode from "react-qr-code"
+import { Button } from "../../components/ui/Button"
+import axios from "axios"
+import useFetch from "../../components/hooks/useFetch"
 
 const QuestionQRCode = () => {
   const { id } = useParams()
   // Getting all FeedbackResponses, aka QRCodes
-  const {data, loading, error, fetchData} = useFetch(`/feedback-responses/${id}/`)
+  const { data, loading, error, fetchData } = useFetch(
+    `/feedback-responses/${id}/`
+  )
 
-  // TODO: 1: check if the feedback id and qr code represent the same Feedback
-  // TODO: 2: Check if the QRCode has expired (if the user has already submitted their feedback)
+  // Loading and error handling
+  if (loading) {
+    return <p>Loading...</p>
+  } else if (error) {
+    return <p>{error}</p>
+  }
 
   const createQRCode = async () => {
     await axios.post(`/feedback-responses/${id}/`)
     fetchData()
   }
 
-  return <>
-    {/* <h1>QRCode for {  }</h1> */}
-    <h1>This is a unique QRCode, for one single instance use. It will expire, once the user has scanned and submitted their feedback.</h1>
-    
-    <p className="text-xl font-bold">
-      $0/mo Free Tier: 2 feedbacks, 60 QR-Codes/mo
-    </p>
-    <p className="text-xl font-bold">
-      $10/mo Mid Tier: 20 feedbacks, 5000 QR-Codes/mo
-    </p>
-    <p className="text-xl font-bold">
-      $100/mo Pro Tier: 200 feedbacks, Infinite (≈∞) QR-Codes/mo
-    </p>
+  return (
+    <>
+      {/* <h1>QRCode for {  }</h1> */}
+      <h1>
+        This is a unique QRCode, for one single instance use. It will expire,
+        once the user has scanned and submitted their feedback.
+      </h1>
 
-    <div className="grid grid-cols-3 gap-6 my-8">
-      {data.map((feedback, index) => 
-        <Link className="cursor-pointer w-fit h-fit" to={`/feedback-response/${feedback.id}`} key={index}>
-          <QRCode value={`/feedback-response/${feedback.id}`} className="w-full h-full" />
-          {feedback.response !== "" && <h1>filled</h1>}
-        </Link>
-      )}
-    </div>
+      <div className="grid grid-cols-3 gap-6 my-8">
+        {data.map((feedback, index) => {
+          // Setting the QRCode value
+          let value
+          if (process.env.NODE_ENV === "development") {
+            value = `http://192.168.0.173:3000/feedback-response/${feedback.id}/`
+          } else {
+            value = `https://feedback-cards.vercel.app/feedback-response/${feedback.id}/`
+          }
 
-    <Button text="Generate new QRCode" onClick={createQRCode} />
-  </>
+          return (
+            <Link
+              className="cursor-pointer w-fit h-fit"
+              to={`/feedback-response/${feedback.id}`}
+              key={index}
+            >
+              <QRCode value={value} className="w-full h-full" />
+              {feedback.is_submitted && <h1>filled</h1>}
+            </Link>
+          )
+        })}
+      </div>
+
+      <Button text="Generate new QRCode" onClick={createQRCode} />
+    </>
+  )
 }
- 
-export default QuestionQRCode;
+
+export default QuestionQRCode

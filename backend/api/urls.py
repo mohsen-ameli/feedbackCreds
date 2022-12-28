@@ -12,6 +12,4 @@ urlpatterns = [
     path('feedback-response/<uuid:uuid>/', views.handle_feedback_response, name="handle-feedback-response"),
     path('feedback-responses/<int:pk>/', views.handle_feedback_responses, name="handle-feedback-responses"),
     path('get-feedback-from-uuid/<uuid:uuid>/', views.get_feedback_from_uuid, name="get-feedback-from-uuid"),
-
-    path('get-user/<int:pk>/', views.get_user, name="get-user"),
 ]

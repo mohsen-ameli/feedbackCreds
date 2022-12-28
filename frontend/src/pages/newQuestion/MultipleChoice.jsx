@@ -14,13 +14,17 @@ const MultipleChoice = ({ back }) => {
 
   // TODO: Add validation
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault()
     const optionList = []
 
     // Validating the options
     let optionsValid
-    options.current.childNodes.forEach(child => child.value === "" ? optionsValid = false : (optionsValid = true, optionList.push(child.value)))
+    options.current.childNodes.forEach((child) =>
+      child.value === ""
+        ? (optionsValid = false)
+        : ((optionsValid = true), optionList.push(child.value))
+    )
 
     // Validating the form
     if (input.current.value === "" || !optionsValid) {
@@ -32,51 +36,66 @@ const MultipleChoice = ({ back }) => {
 
     // Update question
     const context = {
-      "title": input.current.value,
-      "question_type": "Multiple-choice",
-      "choice_1": optionList[0],
-      "choice_2": optionList[1],
-      "choice_3": optionList[2],
-      "choice_4": optionList[3],
+      title: input.current.value,
+      question_type: "Multiple-choice",
+      choices: optionList,
     }
     update(question.id, context)
-  
+
     // Go back
     back()
   }
 
-  return <>
-    {/* Back button */}
-    <span onClick={back} className="font-bold text-lg cursor-pointer p-4 absolute left-0 top-0">
-      &#x2190; Back
-    </span>
+  return (
+    <>
+      {/* Back button */}
+      <span
+        onClick={back}
+        className="font-bold text-lg cursor-pointer p-4 absolute left-0 top-0"
+      >
+        &#x2190; Back
+      </span>
 
-    {/* Card info */}
-    <CardSpring className="pt-14">
-      {/* Form */}
-      <form onSubmit={onSubmit} className="flex flex-col items-center">
-        {/* Question title */}
-        <Input valid={valid} defaultValue={question.title} ref={input} placeholder="Question title" />
-        
-        {/* Options */}
-        <div ref={options} className="grid grid-cols-4 gap-x-2 my-4">
-          {Array(DEFAULT_NUM_OPTIONS).fill(0).map((_, i) => (
-            <Input
-              key={i}
-              defaultValue={question[`choice_${i + 1}`]}
-              placeholder={`#${i + 1}`}
+      {/* Card info */}
+      <CardSpring className="pt-14">
+        {/* Form */}
+        <form onSubmit={onSubmit} className="flex flex-col items-center">
+          {/* Question title */}
+          <Input
+            valid={valid}
+            defaultValue={question.title}
+            ref={input}
+            placeholder="Question title"
+          />
+
+          {/* Options */}
+          <div ref={options} className="grid grid-cols-4 gap-x-2 my-4">
+            {Array(DEFAULT_NUM_OPTIONS)
+              .fill(0)
+              .map((_, i) => (
+                <Input
+                  key={i}
+                  defaultValue={question[`choice_${i + 1}`]}
+                  placeholder={`#${i + 1}`}
+                />
+              ))}
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-x-2">
+            <DangerButton
+              text="Delete"
+              onClick={() => {
+                back()
+                delete_(question.id)
+              }}
             />
-          ))}
-        </div>
-
-        {/* Buttons */}
-        <div className="flex gap-x-2">
-          <DangerButton text="Delete" onClick={() => {back(); delete_(question.id)}} />
-          <Button text="Save" type="submit" />
-        </div>
-      </form>
-    </CardSpring>
-  </>
+            <Button text="Save" type="submit" />
+          </div>
+        </form>
+      </CardSpring>
+    </>
+  )
 }
 
 export default MultipleChoice

@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-from django.contrib.auth.models import AbstractUser
 import uuid
 
 
@@ -12,10 +11,7 @@ class Question(models.Model):
     )
     title = models.CharField(max_length=250, blank=True, default="")
     question_type = models.CharField(max_length=20, choices=STRING_CHOICES, blank=True, default="")
-    choice_1 = models.CharField(max_length=150, blank=True, default="")
-    choice_2 = models.CharField(max_length=150, blank=True, default="")
-    choice_3 = models.CharField(max_length=150, blank=True, default="")
-    choice_4 = models.CharField(max_length=150, blank=True, default="")
+    choices = ArrayField(models.CharField(max_length=150, blank=True, default=""), size=4, blank=True, default=list)
 
     feedback = models.ForeignKey("Feedback", on_delete=models.CASCADE)
 
@@ -39,22 +35,8 @@ class Feedback(models.Model):
 class FeedbackResponse(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     feedback = models.ForeignKey("Feedback", on_delete=models.CASCADE)
-    response = models.CharField(max_length=1000, blank=True, default="")
+    response = models.JSONField(blank=True, default=dict)
+    is_submitted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"feedback: {self.feedback}"
-
-
-class CustomUser(AbstractUser):
-    TIERS = (
-        (0, 'Free'),
-        (1, 'Mid'),
-        (2, 'Pro'),
-    )
-
-    is_business = models.BooleanField(default=False)
-    credit = models.FloatField(blank=True, default=0.0)
-    # tier = models.IntegerField(choices=TIERS, default=TIERS[0])
-
-    def __str__(self):
-        return self.username
