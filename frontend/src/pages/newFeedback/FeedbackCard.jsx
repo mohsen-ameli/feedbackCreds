@@ -76,7 +76,7 @@ const FeedbackCard = ({ index, feedback, reFetch }) => {
           </div>
           <Button
             className="px-2"
-            text="QR-Code"
+            text="QR-Codes"
             onClick={() => navigate(`/${feedback.id}/qr-code`)}
           />
         </form>

@@ -53,7 +53,7 @@ const MultipleChoice = ({ back }) => {
         onClick={back}
         className="font-bold text-lg cursor-pointer p-4 absolute left-0 top-0"
       >
-        &#x2190; Back
+        <i class="fa-solid fa-arrow-left-long"></i> Back
       </span>
 
       {/* Card info */}

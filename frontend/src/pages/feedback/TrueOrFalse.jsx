@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import playConfetti from "../../components/hooks/playConfetti"
 import Clicky from "../../components/ui/Clicky"
-import Title from "../../components/ui/Title"
+import Title from "./Title"
 
 const TrueOrFalse = ({ question, setDataToSubmit }) => {
   const [happy, setHappy] = useState(null)
@@ -20,7 +20,7 @@ const TrueOrFalse = ({ question, setDataToSubmit }) => {
 
   return (
     <div className="flex flex-col items-center gap-y-8 w-full">
-      <Title title={question.title} />
+      <Title text={question.title} />
       <div className="w-full flex items-center justify-around text-lg">
         <Clicky
           onClick={(e) => {

@@ -6,6 +6,7 @@ import useFetch from "../../components/hooks/useFetch"
 import axios from "axios"
 import { useNavigate, useParams } from "react-router-dom"
 import Container from "../../components/ui/Container"
+import PageTitle from "../../components/ui/PageTitle"
 
 export const StageContext = createContext()
 
@@ -18,6 +19,7 @@ const NewQuestions = () => {
   const [canAdd, setCanAdd] = useState(true)
   // Getting all the questions (GET)
   const { data, loading, error, fetchData } = useFetch(`/${id}/questions/`)
+  const { data: feedback } = useFetch(`/feedbacks/${id}/`)
   // Number of questions
   const [numQuestions, setNumQuestions] = useState()
 
@@ -68,16 +70,13 @@ const NewQuestions = () => {
 
   return (
     <Container>
+      <PageTitle text={`${feedback.name} Questions`} />
       <div className="flex flex-col items-center">
-        <h1>
-          We offer 3 different types of feedbacks, that make the process of
-          giving feedbacks for your customers, easy and fast.
-        </h1>
-        <h1>
+        <h1 className="mt-4 text-md font-bold">
           You can make {defaults.MINIMUM_QUESTIONS}-{defaults.MAXIMUM_QUESTIONS}{" "}
           questions.
         </h1>
-        <small>
+        <small className="my-4">
           Notice: You cannot make more than 1 written response. This is so that
           customers don't get bored writing essays. or even worse be too lazy to
           even write anything. So try avoidcing written responses as much as
@@ -94,11 +93,16 @@ const NewQuestions = () => {
           </StageContext.Provider>
         ))}
 
-        <div className="flex items-center gap-x-4">
-          {/* Back button */}
-          <Button text="Back" onClick={() => navigate("/new-feedbacks")} />
-          {/* Adding more questions */}
-          <Button disabled={!canAdd} text="Add new question" onClick={add} />
+        <div className="flex flex-col items-center">
+          <div className="flex gap-x-4">
+            {/* Back button */}
+            <Button text="Back" onClick={() => navigate("/new-feedbacks")} />
+
+            {/* Adding more questions */}
+            <Button disabled={!canAdd} text="Add new question" onClick={add} />
+          </div>
+
+          {/* Error message */}
           {!canAdd && (
             <p className="mt-2 text-red-500">
               You can't add more than {defaults.MAXIMUM_QUESTIONS} questions.

@@ -4,6 +4,7 @@ import { Button } from "../../components/ui/Button"
 import axios from "axios"
 import useFetch from "../../components/hooks/useFetch"
 import Container from "../../components/ui/Container"
+import PageTitle from "../../components/ui/PageTitle"
 
 const QuestionQRCode = () => {
   const { id } = useParams()
@@ -28,11 +29,10 @@ const QuestionQRCode = () => {
 
   return (
     <Container>
-      <h1 className="text-xl font-bold text-center">
-        QRCodes for {feedback.name}
-      </h1>
+      <PageTitle text={`QR-codes for ${feedback.name}`} />
+
       <h1>
-        These are unique QRCodes, for single instance uses. They will expire,
+        These are unique QR-codes, for single instance uses. They will expire,
         once the customer has scanned and submitted their feedback.
       </h1>
 
@@ -59,7 +59,7 @@ const QuestionQRCode = () => {
         })}
       </div>
 
-      <Button text="Generate new QRCode" onClick={createQRCode} />
+      <Button text="Generate new QR-code" onClick={createQRCode} />
     </Container>
   )
 }

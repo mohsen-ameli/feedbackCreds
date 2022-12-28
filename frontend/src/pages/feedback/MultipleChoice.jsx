@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import playConfetti from "../../components/hooks/playConfetti"
 import Clicky from "../../components/ui/Clicky"
-import Title from "../../components/ui/Title"
+import Title from "./Title"
 
 const MultipleChoice = ({ question, setDataToSubmit }) => {
   const [saved, setSaved] = useState(null)
@@ -26,7 +26,7 @@ const MultipleChoice = ({ question, setDataToSubmit }) => {
 
   return (
     <div className="flex flex-col items-center gap-y-8 w-full">
-      <Title title={question.title} />
+      <Title text={question.title} />
       <div className="w-full flex gap-x-4">
         {question.choices.map((choice, index) => (
           <Clicky

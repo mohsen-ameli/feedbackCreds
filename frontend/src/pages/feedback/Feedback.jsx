@@ -8,6 +8,7 @@ import { Button } from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
 import { useState } from "react"
 import axios from "axios"
+import PageTitle from "../../components/ui/PageTitle"
 
 const Feedback = () => {
   const navigate = useNavigate()
@@ -49,12 +50,13 @@ const Feedback = () => {
 
   return (
     <Container>
-      <h1 className="text-2xl font-semibold text-center">{feedback.name}</h1>
+      <PageTitle text={feedback.name} />
       <h1>By answering these questions, you will be rewarded with 10 FC</h1>
       <h1 className="text-rose-500 font-bold">
         Please be honest, as this survey only takes a few seconds to complete.
       </h1>
 
+      {/* Looping through each question, and making sure the question exists before showing it */}
       {questions.map((question, index) => (
         <Card key={index} className="py-24 px-4 bg-[#a5274d]">
           {/* True or false */}

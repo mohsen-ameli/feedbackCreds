@@ -1,4 +1,4 @@
-import Title from "../../components/ui/Title"
+import Title from "./Title"
 import {
   MAX_WRITTEN_RESPONSE_LENGTH,
   MIN_WRITTEN_RESPONSE_LENGTH,
@@ -25,7 +25,7 @@ const WrittenResponse = ({ question, setDataToSubmit }) => {
 
   return (
     <div className="flex flex-col items-center gap-y-3 w-full">
-      <Title title={question.title} />
+      <Title text={question.title} />
       <h1>Max: {MAX_WRITTEN_RESPONSE_LENGTH} words</h1>
       <div className="w-full flex gap-x-4">
         <textarea
