@@ -3,14 +3,17 @@ import QuestionCard from "./QuestionCard"
 import * as defaults from "../../data/Constants"
 import { createContext, useEffect, useState } from "react"
 import useFetch from "../../components/hooks/useFetch"
-import axios from "axios"
 import { useNavigate, useParams } from "react-router-dom"
 import Container from "../../components/ui/Container"
 import PageTitle from "../../components/ui/PageTitle"
+import useAxios from "../../components/hooks/useAxios"
 
 export const StageContext = createContext()
 
+// TODO: Export the context to a different file
+
 const NewQuestions = () => {
+  const axiosInstance = useAxios()
   // Feedback ID
   const { id } = useParams()
   // Navigation
@@ -29,7 +32,7 @@ const NewQuestions = () => {
     const context = {
       feedback: id,
     }
-    await axios.post(`/${id}/questions/`, context)
+    await axiosInstance.post(`/${id}/questions/`, context)
     // Refreshing the data
     fetchData()
     // Adding one to the number of questions
@@ -39,7 +42,7 @@ const NewQuestions = () => {
   // Delete a question (DELETE)
   const delete_ = async (index) => {
     // Deleting the question
-    await axios.delete(`/${id}/questions/${index}/`)
+    await axiosInstance.delete(`/${id}/questions/${index}/`)
     // Refreshing the data
     fetchData()
     // Subtracting one from the number of questions
@@ -48,7 +51,10 @@ const NewQuestions = () => {
 
   // Updating a question (PUT)
   const update = async (index, context) => {
-    await axios.put(`/${id}/questions/${index}/`, { ...context, feedback: id })
+    await axiosInstance.put(`/${id}/questions/${index}/`, {
+      ...context,
+      feedback: id,
+    })
     // Refreshing the data
     fetchData()
   }

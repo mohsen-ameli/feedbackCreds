@@ -1,4 +1,4 @@
-import axios from "axios"
+import useAxios from "../../components/hooks/useAxios"
 import useFetch from "../../components/hooks/useFetch"
 import { Button } from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
@@ -8,11 +8,12 @@ import FeedbackCard from "./FeedbackCard"
 const NewFeedback = () => {
   // Fetch all feedbacks
   const { data, loading, error, fetchData } = useFetch("/feedbacks")
+  const axiosInstance = useAxios()
 
   // Add new feedback (POST)
   const add = async () => {
     // Adding a new empty feedback
-    await axios.post(`/feedbacks/`)
+    await axiosInstance.post(`/feedbacks/`)
     // Refreshing the data
     fetchData()
   }

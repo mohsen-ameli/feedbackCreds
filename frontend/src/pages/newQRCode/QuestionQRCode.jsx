@@ -1,12 +1,13 @@
 import { Link, useParams } from "react-router-dom"
 import QRCode from "react-qr-code"
 import { Button } from "../../components/ui/Button"
-import axios from "axios"
 import useFetch from "../../components/hooks/useFetch"
 import Container from "../../components/ui/Container"
 import PageTitle from "../../components/ui/PageTitle"
+import useAxios from "../../components/hooks/useAxios"
 
 const QuestionQRCode = () => {
+  const axiosInstance = useAxios()
   const { id } = useParams()
   // Getting all FeedbackResponses, aka QRCodes
   const { data, loading, error, fetchData } = useFetch(
@@ -16,7 +17,7 @@ const QuestionQRCode = () => {
 
   // Creating a new QRCode
   const createQRCode = async () => {
-    await axios.post(`/feedback-responses/${id}/`)
+    await axiosInstance.post(`/feedback-responses/${id}/`)
     fetchData()
   }
 

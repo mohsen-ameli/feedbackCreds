@@ -4,11 +4,13 @@ from rest_framework.exceptions import ValidationError
 from .models import Feedback, Question, FeedbackResponse
 from .serializers import QuestionSerializer, FeedbackSerializer, FeedbackResponseSerializer
 from django.core.exceptions import ObjectDoesNotExist
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
 
 
 # API Overview
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def api_overview(request):
     api_urls = {
         'Question List': '/<int:feed_pk>/questions/',
@@ -42,8 +44,8 @@ def api_overview(request):
 # ----------------- QUESTION ----------------- #
 
 # Listing all the questions
-@csrf_exempt
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def handle_questions(request, feed_pk):
     # GET
     if request.method == 'GET':
@@ -69,8 +71,8 @@ def handle_questions(request, feed_pk):
 
 
 # Handling a single question
-@csrf_exempt
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def handle_question(request, feed_pk, pk):
     # GET
     if request.method == 'GET':
@@ -102,8 +104,8 @@ def handle_question(request, feed_pk, pk):
 
 # ----------------- FEEDBACK ----------------- #
 
-@csrf_exempt
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def handle_feedbacks(request):
     # GET
     if request.method == 'GET':
@@ -128,8 +130,8 @@ def handle_feedbacks(request):
         return Response(serializer.data)
 
 
-@csrf_exempt
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def handle_feedback(request, pk):
     # GET
     if request.method == 'GET':
@@ -163,8 +165,8 @@ def handle_feedback(request, pk):
 
 ######## You could split this up into two views, but for restful purposes, I left it as one ########
 # List all feedback responses, or create a new one
-@csrf_exempt
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def handle_feedback_responses(request, feed_pk):
     # GET (For bussinesses to see their feedback responses)
     if request.method == 'GET':
@@ -186,6 +188,7 @@ def handle_feedback_responses(request, feed_pk):
 
 # GET and PUT for a single feedback response (filled response)
 @api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated])
 def handle_feedback_response(request, uuid):
     # Validating that the FeedbackResponse exists (QRCode is valid)
     try:
@@ -238,6 +241,7 @@ def handle_feedback_response(request, uuid):
 
 # Getting the feedback of the FeedbackResponse based on its uuid
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_feedback_from_uuid(request, uuid):
     try:
         feedback = FeedbackResponse.objects.get(id=uuid).feedback

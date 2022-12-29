@@ -7,11 +7,12 @@ import WrittenResponse from "./WrittenResponse"
 import { Button } from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
 import { useState } from "react"
-import axios from "axios"
 import PageTitle from "../../components/ui/PageTitle"
+import useAxios from "../../components/hooks/useAxios"
 
 const Feedback = () => {
   const navigate = useNavigate()
+  const axiosInstance = useAxios()
   const { uuid } = useParams()
   const {
     data: questions,
@@ -34,8 +35,10 @@ const Feedback = () => {
       is_submitted: true,
     }
     try {
-      const res = await axios.put(`/feedback-response/${uuid}/`, context)
-      if (res.status === 200) navigate("/")
+      await axiosInstance.put(`/feedback-response/${uuid}/`, context)
+      await axiosInstance.put(`/get-user/3/`, { credit: 10 })
+
+      navigate("/")
     } catch (error) {
       setError(error.response.data.message)
     }

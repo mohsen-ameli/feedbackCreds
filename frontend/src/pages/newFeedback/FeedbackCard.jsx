@@ -4,9 +4,10 @@ import { Button, DangerButton } from "../../components/ui/Button"
 import Card from "../../components/ui/Card"
 import TextInput from "../../components/ui/TextInput"
 import Counter from "../../components/ui/Counter"
-import axios from "axios"
+import useAxios from "../../components/hooks/useAxios"
 
-const FeedbackCard = ({ index, feedback, reFetch }) => {
+const FeedbackCard = ({ index, feedback }) => {
+  const axiosInstance = useAxios()
   // Navigation
   const navigate = useNavigate()
   const next = () => navigate(`/${feedback.id}/new-questions/`)
@@ -15,7 +16,7 @@ const FeedbackCard = ({ index, feedback, reFetch }) => {
   // The name of the feedback
   const [name, setName] = useState(feedback?.name)
   // Is the card open, used locally in this component
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen] = useState(false)
   // To keep track of the current name
   const currentName = useRef(feedback?.name)
 
@@ -25,7 +26,7 @@ const FeedbackCard = ({ index, feedback, reFetch }) => {
     setChanged(false)
     currentName.current = name
 
-    await axios.put(`/feedbacks/${feedback.id}/`, { name })
+    await axiosInstance.put(`/feedbacks/${feedback.id}/`, { name })
   }
 
   // Canceling the name change
