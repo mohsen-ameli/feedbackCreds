@@ -75,7 +75,7 @@ const MultipleChoice = ({ back }) => {
               .map((_, i) => (
                 <Input
                   key={i}
-                  defaultValue={question[`choice_${i + 1}`]}
+                  defaultValue={question.choices[i]}
                   placeholder={`#${i + 1}`}
                 />
               ))}

@@ -1,11 +1,10 @@
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { AuthContext } from "../context/AuthContext"
 import useFetch from "./hooks/useFetch"
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext)
-
   const { data } = useFetch(`/get-user/${user?.user_id}/`)
 
   return (

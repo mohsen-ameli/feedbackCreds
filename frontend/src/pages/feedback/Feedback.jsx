@@ -6,12 +6,14 @@ import TrueOrFalse from "./TrueOrFalse"
 import WrittenResponse from "./WrittenResponse"
 import { Button } from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import PageTitle from "../../components/ui/PageTitle"
 import useAxios from "../../components/hooks/useAxios"
+import { AuthContext } from "../../context/AuthContext"
 
 const Feedback = () => {
   const navigate = useNavigate()
+  const { user } = useContext(AuthContext)
   const axiosInstance = useAxios()
   const { uuid } = useParams()
   const {
@@ -36,7 +38,7 @@ const Feedback = () => {
     }
     try {
       await axiosInstance.put(`/feedback-response/${uuid}/`, context)
-      await axiosInstance.put(`/get-user/3/`, { credit: 10 })
+      await axiosInstance.put(`/get-user/${user?.user_id}/`, { credit: 10 })
 
       navigate("/")
     } catch (error) {

@@ -6,13 +6,17 @@ from .serializers import QuestionSerializer, FeedbackSerializer, FeedbackRespons
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 # API Overview
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def api_overview(request):
     api_urls = {
+        'Token': '/token/',
+        'Token Refresh': '/token/refresh/',
+        "---------------": "--------------",
         'Question List': '/<int:feed_pk>/questions/',
         'Question Create': '/<int:feed_pk>/questions/',
 
@@ -39,6 +43,25 @@ def api_overview(request):
         'get-user': '/get-user/<int:pk>/'
     }
     return Response(api_urls)
+
+
+# ----------------- CUSTOM TOKEN CLAIMS JWT ----------------- #
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['username'] = user.username
+        token['is_business'] = user.is_business
+        token['tier'] = user.tier
+        token['credit'] = user.credit
+        return token
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 
 # ----------------- QUESTION ----------------- #

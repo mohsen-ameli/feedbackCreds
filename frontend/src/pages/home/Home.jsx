@@ -1,5 +1,7 @@
+import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "../../components/ui/Button"
+import { AuthContext } from "../../context/AuthContext"
 
 const Home = () => {
   const navigate = useNavigate()
@@ -31,10 +33,12 @@ const Home = () => {
         />
       </div>
 
+      {/* {user?.is_business && ( */}
       <Button
         onClick={() => navigate("/new-feedbacks")}
         text="Create a new feedback form!"
       />
+      {/* )} */}
     </div>
   )
 }
