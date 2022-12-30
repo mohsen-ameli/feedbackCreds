@@ -6,6 +6,7 @@ import { Button } from "../../components/ui/Button"
 import Counter from "../../components/ui/Counter"
 import { StageContext } from "./NewQuestions"
 import Card from "../../components/ui/Card"
+import { motion } from "framer-motion"
 
 const QuestionCard = () => {
   // Question type, used locally in this component
@@ -55,6 +56,10 @@ const QuestionCard = () => {
           )}
         </>
       )}
+
+      <motion.div className="absolute bottom-1/2 translate-y-1/2 right-0 p-4 z-10 cursor-pointer">
+        <i className="fa-solid fa-grip-vertical text-xl -z-10"></i>
+      </motion.div>
     </Card>
   )
 }

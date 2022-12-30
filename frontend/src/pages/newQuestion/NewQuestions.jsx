@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import Container from "../../components/ui/Container"
 import PageTitle from "../../components/ui/PageTitle"
 import useAxios from "../../components/hooks/useAxios"
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
 
 export const StageContext = createContext()
 
@@ -16,15 +17,19 @@ const NewQuestions = () => {
   const axiosInstance = useAxios()
   // Feedback ID
   const { id } = useParams()
-  // Navigation
   const navigate = useNavigate()
   // State to see if the user can add more questions
   const [canAdd, setCanAdd] = useState(true)
+  const [numQuestions, setNumQuestions] = useState()
+  const [questions, setQuestions] = useState([])
   // Getting all the questions (GET)
   const { data, loading, error, fetchData } = useFetch(`/${id}/questions/`)
   const { data: feedback } = useFetch(`/feedbacks/${id}/`)
-  // Number of questions
-  const [numQuestions, setNumQuestions] = useState()
+
+  useEffect(() => {
+    setQuestions(data)
+    console.log("first")
+  }, [data])
 
   // Add new question (POST)
   const add = async () => {
@@ -67,6 +72,15 @@ const NewQuestions = () => {
       : setCanAdd(true)
   }, [data.length, numQuestions])
 
+  // Drag and drop
+  const onDragEnd = (result) => {
+    if (!result.destination) return
+    const items = Array.from(questions)
+    const [reorderedItem] = items.splice(result.source.index, 1)
+    items.splice(result.destination.index, 0, reorderedItem)
+    setQuestions(items)
+  }
+
   // Loading and error handling
   if (loading) {
     return <p>Loading...</p>
@@ -90,14 +104,45 @@ const NewQuestions = () => {
         </small>
 
         {/* Questions */}
-        {data.map((question, index) => (
-          <StageContext.Provider
-            value={{ add, delete_, update, question, index }}
-            key={index}
-          >
-            <QuestionCard />
-          </StageContext.Provider>
-        ))}
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="Questions">
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="w-full select-none"
+                style={{ minHeight: `${numQuestions * 140}px` }}
+              >
+                {questions.map((question, index) => (
+                  <Draggable
+                    key={question.id}
+                    draggableId={question.id.toString()}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className="w-full h-full"
+                      >
+                        {/* <div className="w-full h-[50px] bg-blue-400 my-2">
+                          hey
+                        </div> */}
+                        <StageContext.Provider
+                          value={{ add, delete_, update, question, index }}
+                        >
+                          <QuestionCard />
+                        </StageContext.Provider>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
 
         <div className="flex flex-col items-center">
           <div className="flex gap-x-4">

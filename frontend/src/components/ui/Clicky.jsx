@@ -8,6 +8,7 @@ const Clicky = (props) => {
       transition={{ type: "spring", stiffness: 500, damping: 13 }}
       className={"cursor-pointer " + props.className}
       onClick={props.onClick}
+      {...props}
     >
       {props.children}
     </motion.button>
