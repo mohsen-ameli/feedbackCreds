@@ -7,7 +7,20 @@ import { useNavigate, useParams } from "react-router-dom"
 import Container from "../../components/ui/Container"
 import PageTitle from "../../components/ui/PageTitle"
 import useAxios from "../../components/hooks/useAxios"
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core"
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
 
 export const StageContext = createContext()
 
@@ -20,7 +33,7 @@ const NewQuestions = () => {
   const navigate = useNavigate()
   // State to see if the user can add more questions
   const [canAdd, setCanAdd] = useState(true)
-  const [numQuestions, setNumQuestions] = useState()
+  const [numQuestions, setNumQuestions] = useState([])
   const [questions, setQuestions] = useState([])
   // Getting all the questions (GET)
   const { data, loading, error, fetchData } = useFetch(`/${id}/questions/`)
@@ -28,7 +41,6 @@ const NewQuestions = () => {
 
   useEffect(() => {
     setQuestions(data)
-    console.log("first")
   }, [data])
 
   // Add new question (POST)
@@ -72,13 +84,25 @@ const NewQuestions = () => {
       : setCanAdd(true)
   }, [data.length, numQuestions])
 
-  // Drag and drop
-  const onDragEnd = (result) => {
-    if (!result.destination) return
-    const items = Array.from(questions)
-    const [reorderedItem] = items.splice(result.source.index, 1)
-    items.splice(result.destination.index, 0, reorderedItem)
-    setQuestions(items)
+  // dnd-kit
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event
+
+    if (active.id !== over.id) {
+      setQuestions((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id)
+        const newIndex = items.findIndex((item) => item.id === over.id)
+
+        return arrayMove(items, oldIndex, newIndex)
+      })
+    }
   }
 
   // Loading and error handling
@@ -103,46 +127,28 @@ const NewQuestions = () => {
           possible
         </small>
 
-        {/* Questions */}
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="Questions">
-            {(provided) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className="w-full select-none"
-                style={{ minHeight: `${numQuestions * 140}px` }}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={questions}
+            strategy={verticalListSortingStrategy}
+          >
+            {/* Questions */}
+            {questions.map((question, index) => (
+              <StageContext.Provider
+                key={question.id}
+                value={{ add, delete_, update, question, index }}
               >
-                {questions.map((question, index) => (
-                  <Draggable
-                    key={question.id}
-                    draggableId={question.id.toString()}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="w-full h-full"
-                      >
-                        {/* <div className="w-full h-[50px] bg-blue-400 my-2">
-                          hey
-                        </div> */}
-                        <StageContext.Provider
-                          value={{ add, delete_, update, question, index }}
-                        >
-                          <QuestionCard />
-                        </StageContext.Provider>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+                <QuestionCard />
+              </StageContext.Provider>
+            ))}
+          </SortableContext>
+        </DndContext>
+
+        {/* <div className="w-full h-10 my-4 bg-blue-500">{question}</div> */}
 
         <div className="flex flex-col items-center">
           <div className="flex gap-x-4">

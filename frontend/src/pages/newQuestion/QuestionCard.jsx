@@ -7,6 +7,8 @@ import Counter from "../../components/ui/Counter"
 import { StageContext } from "./NewQuestions"
 import Card from "../../components/ui/Card"
 import { motion } from "framer-motion"
+import { useSortable } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 
 const QuestionCard = () => {
   // Question type, used locally in this component
@@ -27,40 +29,56 @@ const QuestionCard = () => {
     height: isOpen ? (QuestionType === "Multiple-choice" ? 250 : 175) : 100,
   }
 
+  // dnd-kit
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: question.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
   return (
-    <Card isOpen={isOpen} animate={animate} className="px-4">
-      {/* Sub-sections */}
-      {isOpen && QuestionType === "Multiple-choice" && (
-        <MultipleChoice back={() => handleClick(null)} />
-      )}
-      {isOpen && QuestionType === "True-or-false" && (
-        <TrueOrFalse back={() => handleClick(null)} />
-      )}
-      {isOpen && QuestionType === "Written-response" && (
-        <WrittenResponse back={() => handleClick(null)} />
-      )}
+    <div className="w-full" ref={setNodeRef} style={style}>
+      <Card isOpen={isOpen} animate={animate} className="px-4">
+        {/* Sub-sections */}
+        {isOpen && QuestionType === "Multiple-choice" && (
+          <MultipleChoice back={() => handleClick(null)} />
+        )}
+        {isOpen && QuestionType === "True-or-false" && (
+          <TrueOrFalse back={() => handleClick(null)} />
+        )}
+        {isOpen && QuestionType === "Written-response" && (
+          <WrittenResponse back={() => handleClick(null)} />
+        )}
 
-      {/* Main section */}
-      {!isOpen && (
-        <>
-          {/* Question counter */}
-          <Counter index={index} />
+        {/* Main section */}
+        {!isOpen && (
+          <>
+            {/* Question counter */}
+            <Counter index={index} />
 
-          {/* Questions */}
-          {question.title !== "" ? (
-            // Feedback is saved
-            <SavedFeedback handleClick={handleClick} question={question} />
-          ) : (
-            // New feedback
-            <Sections handleClick={handleClick} />
-          )}
-        </>
-      )}
+            {/* Questions */}
+            {question.title !== "" ? (
+              // Feedback is saved
+              <SavedFeedback handleClick={handleClick} question={question} />
+            ) : (
+              // New feedback
+              <Sections handleClick={handleClick} />
+            )}
 
-      <motion.div className="absolute bottom-1/2 translate-y-1/2 right-0 p-4 z-10 cursor-pointer">
-        <i className="fa-solid fa-grip-vertical text-xl -z-10"></i>
-      </motion.div>
-    </Card>
+            {/* Drag handler */}
+            <motion.div
+              {...listeners}
+              {...attributes}
+              className="absolute bottom-1/2 translate-y-1/2 right-0 p-4 cursor-pointer"
+            >
+              <i className="fa-solid fa-grip-vertical text-xl"></i>
+            </motion.div>
+          </>
+        )}
+      </Card>
+    </div>
   )
 }
 
