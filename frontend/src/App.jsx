@@ -9,6 +9,7 @@ import Feedback from "./pages/feedback/Feedback"
 import Login from "./pages/authentication/login/Login"
 import AuthContextProvider from "./context/AuthContext"
 import PrivateRoute from "./utils/PrivateRoute"
+import Signup from "./pages/authentication/signup/Signup"
 
 const App = () => {
   return (
@@ -61,6 +62,9 @@ const App = () => {
 
           {/* Login */}
           <Route path="/login" element={<Login />} />
+
+          {/* Signup */}
+          <Route path="/signup" element={<Signup />} />
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />

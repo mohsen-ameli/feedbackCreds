@@ -5,25 +5,26 @@ import Container from "../../../components/ui/Container"
 import PageTitle from "../../../components/ui/PageTitle"
 import TextInput from "../../../components/ui/TextInput"
 
-const Login = () => {
+const Signup = () => {
   // Context
-  const { login } = useContext(AuthContext)
+  const { signup } = useContext(AuthContext)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     // Get the username and password
     const username = e.target.username.value
+    const email = e.target.email.value
     const password = e.target.password.value
 
-    if (username !== "" && password !== "")
-      // Log the user in
-      login(username, password)
+    if (username !== "" && email !== "" && password !== "")
+      // sing the user up
+      signup(username, email, password)
   }
 
   return (
     <Container>
-      <PageTitle text="Login" />
+      <PageTitle text="Sign up" />
 
       <form
         onSubmit={handleSubmit}
@@ -39,6 +40,15 @@ const Login = () => {
             className="mt-3"
           />
         </label>
+        <label htmlFor="email">
+          Email
+          <TextInput
+            name="email"
+            id="email"
+            placeholder="Email"
+            className="mt-3"
+          />
+        </label>
         <label htmlFor="password">
           Password
           <TextInput
@@ -49,10 +59,10 @@ const Login = () => {
             className="mt-3"
           />
         </label>
-        <Button text="Login" type="submit" />
+        <Button text="Sign up" type="submit" />
       </form>
     </Container>
   )
 }
 
-export default Login
+export default Signup

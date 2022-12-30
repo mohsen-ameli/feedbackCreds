@@ -1,15 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import CustomUser
-from .serializers import UserSerializer
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes
+from .serializers import UserSerializer, UserFullSerializer
 
 # ----------------- USER ----------------- #
 
 # Getting the user's information
 @api_view(['GET', 'PUT'])
-@permission_classes([IsAuthenticated])
 def get_user(request, pk):
     user = CustomUser.objects.get(pk=pk)
 
@@ -32,3 +29,17 @@ def get_user(request, pk):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+
+
+# Creating a new user
+@api_view(['POST'])
+def create_user(request):
+    serializer = UserFullSerializer(data=request.data, partial=True)
+
+    if serializer.is_valid():
+        # print(serializer.validated_data)
+        # CustomUser.objects.create_user(**serializer.validated_data)
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors)
+

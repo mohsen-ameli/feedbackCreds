@@ -64,6 +64,24 @@ const AuthContextProvider = (props) => {
     navigate("/")
   }
 
+  // Sign up
+  const signup = async (username, email, password) => {
+    try {
+      const context = {
+        username,
+        email,
+        password,
+      }
+      const res = await axios.post("/create-user/", context)
+      if (res.status === 200) {
+        // Going home
+        navigate("/login")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const value = {
     user,
     tokens,
@@ -71,6 +89,7 @@ const AuthContextProvider = (props) => {
     setTokens,
     login,
     logout,
+    signup,
   }
 
   return (

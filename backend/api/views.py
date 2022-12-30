@@ -40,7 +40,8 @@ def api_overview(request):
         'Feedback response Create': '/feedback-responses/<int:feed_pk>/',
 
         "---------------": "--------------",
-        'get-user': '/get-user/<int:pk>/'
+        'get-user': '/get-user/<int:pk>/',
+        'create-user': '/create-user/'
     }
     return Response(api_urls)
 
